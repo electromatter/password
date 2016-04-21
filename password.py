@@ -8,13 +8,17 @@ import getpass
 
 WORDS = [line.strip() for line in open('english.txt') if line.strip() != '']
 
+def secure_random_int(bits):
+	x = int.from_bytes(os.urandom(bits + 7) // 8), byteorder='big')
+	return int(bin(x)[-bits:], 2)
+
 def pick_word(words=None):
 	if words is None:
 		words = WORDS
+	bits = len(bin(len(words))) - 2
 	x = len(words) + 1
 	while x >= len(words):
-		x = int.from_bytes(os.urandom((len(bin(len(words))) + 5) // 8),
-				   byteorder='big')
+		x = secure_random_int(bits)
 	return words[x]
 
 def gen_password(entropy=60, words=None):
