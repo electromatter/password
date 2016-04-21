@@ -3,6 +3,7 @@
 import os
 import base64
 import hashlib
+import hmac
 import sys
 import getpass
 
@@ -118,6 +119,15 @@ def words_as_int(phrase, words=None):
 		x += words.index(word)
 
 	return x
+
+def hmac_words(key, target='amazon', words=None, bits=48):
+	if isinstance(key, str):
+		key = key.encode('utf8')
+	if isinstance(target, str):
+		target = target.encode('utf8')
+	digest = hmac.new(key, target, digestmod=hashlib.sha256).digest()
+	value = prime_truncate(int.from_bytes(digest, byteorder='big'), bits)
+	return int_as_words(value, words)
 
 def ss64_words(master, target='amazon', words=None, bits=48):
 	password = '%s:%s' % (master, target)
