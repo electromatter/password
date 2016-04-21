@@ -119,8 +119,7 @@ def words_as_int(phrase, words=None):
 
 	return x
 
-def ss64_word(master, target='amazon', words=None):
-	bits = 48
+def ss64_word(master, target='amazon', words=None, bits=48):
 	password = '%s:%s' % (master, target)
 	digest = hashlib.sha256(password.encode('utf8')).digest()
 	value = prime_truncate(int.from_bytes(digest, byteorder='big'), bits)
