@@ -12,12 +12,12 @@ def pick_word(words=None):
 	if words is None:
 		words = WORDS
 	x = len(words) + 1
-	while x > len(words):
+	while x >= len(words):
 		x = int.from_bytes(os.urandom((len(bin(len(words))) + 5) // 8),
 				   byteorder='big')
 	return words[x]
 
-def gen_password(entropy=30, words=None):
+def gen_password(entropy=60, words=None):
 	if words is None:
 		words = WORDS
 	entropy_words = int(entropy / (len(bin((len(words)))) - 2) + .5)
