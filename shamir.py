@@ -19,9 +19,10 @@ def modinv(b, n):
 def eval_poly(prime, coeff, x):
 	pass
 
-def gen_shares(secret, n, m, prime):
+def gen_shares(prime, secret, n, m):
 	if isinstance(secret, str):
 		secret = secret.encode('utf8')
+
 	if isinstance(secret, bytes):
 		secret = int.from_bytes(secret, byteorder='big')
 
