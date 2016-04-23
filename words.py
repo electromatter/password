@@ -5,12 +5,13 @@ import hashlib
 import hmac
 import sys
 import getpass
+import bisect
 
 WORDS = [line.strip() for line in open('english.txt') if line.strip() != '']
 
 # All the primes just less than a power of two encoded as:
 # 2^key - value
-PRIME_RESIDUALS = {
+PRIME_RESIDUALS = list({
   8: 5,    9: 3,     10: 3,    11: 9,    12: 3,    13: 1,    14: 3,    15: 19,
  16: 15,   17: 1,    18: 5,    19: 1,    20: 3,    21: 9,    22: 3,    23: 15,
  24: 3,    25: 39,   26: 5,    27: 39,   28: 57,   29: 3,    30: 35,   31: 1,
@@ -41,25 +42,19 @@ PRIME_RESIDUALS = {
 224: 63,  225: 49,  226: 5,   227: 405, 228: 93,  229: 91,  230: 27,  231: 165,
 232: 567, 233: 3,   234: 83,  235: 15,  236: 209, 237: 181, 238: 161, 239: 87,
 240: 467, 241: 39,  242: 63,  243: 9,   244: 189, 245: 163, 246: 107, 247: 81,
-248: 237, 249: 75,  250: 207, 251: 9,   252: 129, 253: 273, 254: 245, 255: 19
-256: 189, 257: 93,  258: 87,  259: 361, 260: 149, 261: 223, 262: 71,  263: 747,
-264: 275, 265: 49,  266: 3,   267: 265, 268: 77,  269: 241, 270: 53,  271: 169,
-}
+248: 237, 249: 75,  250: 207, 251: 9,   252: 129, 253: 273, 254: 245, 255: 19,
+256: 189, 257: 93,  258: 87,  259: 361, 260: 149, 261: 223, 262: 71,  263: 747
+}.items())
 
 def prime(bits, residuals=None):
 	if residuals is None:
 		residuals = PRIME_RESIDUALS
 
-	bits = int(bits)
+	index = bisect.bisect_right(residuals, bits)
+	if index == len(residuals):
+		raise ValueError('No stored prime that can hold a value of %r bits' % bits)
 
-	if bits not in residuals:
-		bound = min(residuals.keys())
-		if bits < bound:
-			bits = bound
-		else:
-			raise ValueError('%r bits is too large' % bits)
-
-	return (1 << bits) - residuals[bits]
+	return (1 << bits) - residuals[index][1]
 
 def prime_truncate(x, bits):
 	return x % prime(bits)
