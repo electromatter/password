@@ -24,7 +24,7 @@ def eval_poly(prime, coeff, x):
 		resid = (resid * x) % prime
 	return value
 
-def gen_shares(prime, secret, n, m):
+def gen_poly(prime, secret, n, m)
 	if isinstance(secret, str):
 		secret = secret.encode('utf8')
 
@@ -37,8 +37,10 @@ def gen_shares(prime, secret, n, m):
 	if n < m or n < 2:
 		raise ValueError('invalid number of shares')
 
-	coeff = [secret] + [random_int(prime) for _ in range(m - 1)]
+	return [secret] + [random_int(prime) for _ in range(m - 1)]
 
+def gen_shares(prime, secret, n, m):
+	coeff = gen_poly(prime, secret, n, m)
 	return [(x, eval_poly(prime, coeff, x)) for x in range(1, n + 1)]
 
 def recover(prime, shares):
