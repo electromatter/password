@@ -55,7 +55,7 @@ def prime(bits, residuals=None):
 	if index == len(residuals):
 		raise ValueError('No stored prime that can hold a value of %r bits' % bits)
 
-	return (1 << bits) - residuals[index][1]
+	return (1 << residuals[index][0]) - residuals[index][1]
 
 def random_bits(bits):
 	x = int.from_bytes(_urandom((bits + 7) // 8), byteorder='big')
