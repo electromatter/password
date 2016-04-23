@@ -139,10 +139,10 @@ if __name__=='__main__':
 	if len(sys.argv) == 3:
 		arg = sys.argv[1].lower()
 		target = sys.argv[2]
-		if arg == 'hmac':
+		if arg == 'ss64':
 			master = getpass.getpass('Master: ')
 			print(ss64(master, target))
-		elif arg == 'ss64':
+		elif arg == 'hmac':
 			master = getpass.getpass('Master: ')
 			print(' '.join(hmac_words(master, target)))
 		else:
