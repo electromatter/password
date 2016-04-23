@@ -50,7 +50,7 @@ def prime(bits, residuals=None):
 	if residuals is None:
 		residuals = PRIME_RESIDUALS
 
-	bits = int(bits) + 1
+	bits = int(bits)
 
 	if bits not in residuals:
 		bound = min(residuals.keys())
