@@ -56,7 +56,14 @@ def prime(bits, residuals=None):
 	else:
 		bits = int(bits)
 
-	return (1 << bits) - PRIME_RESIDUALS[bits]
+	if bits not in residuals:
+		bound = min(residuals.keys())
+		if bits < bound:
+			bits = bound
+		else:
+			raise ValueError('%r bits is too large' % bits)
+
+	return (1 << bits) - residuals[bits]
 
 def prime_truncate(x, bits):
 	return x % prime(bits)
