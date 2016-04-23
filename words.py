@@ -65,31 +65,37 @@ def secure_random_int(bits):
 	x = int.from_bytes(os.urandom((bits + 7) // 8), byteorder='big')
 	return truncate_bits(x, bits)
 
-def pick_word(words=None):
+def pick(words=None):
 	if words is None:
 		words = WORDS
+
+	if len(words) == 0:
+		raise ValueError('alphabet has no non-zero elements')
+	elif len(words) == 1:
+		return words[0]
+
 	bits = len(bin(len(words))) - 2
+
 	x = len(words) + 1
 	while x >= len(words):
 		x = secure_random_int(bits)
+
 	return words[x]
 
 def gen_password(entropy=60, words=None):
 	if words is None:
 		words = WORDS
 
-	entropy = int(entropy)
 	if entropy < 0:
 		raise ValueError('negitive entropy?')
-
-	if entropy == 0:
-		return (words[0], )
 
 	if len(words) < 2:
 		raise ValueError('alphabet has no non-zero elements')
 
-	entropy_words = int(entropy / (len(bin((len(words)))) - 2) + .5)
-	return tuple(pick_word(words) for _ in range(entropy_words))
+	entropy_words = (len(bin((len(words)))) - 2)
+
+	num_words = (int(entropy) + (entropy_words - 1)) // entropy_words
+	return tuple(pick(words) for _ in range(num_words))
 
 def int_as_words(x, words=None):
 	if words is None:
@@ -121,20 +127,6 @@ def words_as_int(phrase, words=None):
 		x += words.index(word)
 
 	return x
-
-def egcd(b, n):
-	x0, x1, y0, y1 = 1, 0, 0, 1
-	while n != 0:
-		q, b, n = b // n, n, b % n
-		x0, x1 = x1, x0 - q * x1
-		y0, y1 = y1, y0 - q * y1
-	return  b, x0, y0
-
-def modinv(b, n):
-	g, x, _ = egcd(b, n)
-	if g != 1:
-		raise ValueError('%r is not invertable mod %r' % (b, n))
-	return x % n
 
 def hmac_words(key, target='amazon', words=None, bits=48):
 	if isinstance(key, str):
