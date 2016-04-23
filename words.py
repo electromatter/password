@@ -47,12 +47,15 @@ PRIME_RESIDUALS = {
 264: 275, 265: 49,  266: 3,   267: 265, 268: 77,  269: 241, 270: 53,  271: 169,
 }
 
-def prime(bits):
-	bits = int(bits)
-	if bits < 8:
-		bits = 8
-	if bits > 255:
-		bits = 255
+def prime(bits, residuals=None):
+	if residuals is None:
+		residuals = PRIME_RESIDUALS
+
+	if bits > int(bits):
+		bits = int(bits) + 1
+	else:
+		bits = int(bits)
+
 	return (1 << bits) - PRIME_RESIDUALS[bits]
 
 def prime_truncate(x, bits):
@@ -69,16 +72,14 @@ def pick(words=None):
 	if words is None:
 		words = WORDS
 
-	if len(words) == 0:
+	if len(words) < 2:
 		raise ValueError('alphabet has no non-zero elements')
-	elif len(words) == 1:
-		return words[0]
 
-	bits = len(bin(len(words))) - 2
+	entropy_words = len(bin(len(words))) - 2
 
 	x = len(words) + 1
 	while x >= len(words):
-		x = secure_random_int(bits)
+		x = secure_random_int(entropy_words)
 
 	return words[x]
 
@@ -92,12 +93,16 @@ def gen_password(entropy=60, words=None):
 	if len(words) < 2:
 		raise ValueError('alphabet has no non-zero elements')
 
-	entropy_words = (len(bin((len(words)))) - 2)
+	entropy_words = len(bin((len(words)))) - 2
 
 	num_words = (int(entropy) + (entropy_words - 1)) // entropy_words
+
+	if num_words == 0:
+		num_words = 1
+
 	return tuple(pick(words) for _ in range(num_words))
 
-def int_as_words(x, words=None):
+def int_as_words(value, words=None):
 	if words is None:
 		words = WORDS
 
@@ -108,9 +113,9 @@ def int_as_words(x, words=None):
 		raise ValueError('alphabet has no non-zero elements')
 
 	phrase = []
-	while x > 0:
-		phrase.append(words[x % len(words)])
-		x //= len(words)
+	while value > 0:
+		phrase.append(words[value % len(words)])
+		value //= len(words)
 
 	return tuple(reversed(phrase))
 
@@ -121,20 +126,23 @@ def words_as_int(phrase, words=None):
 	if len(words) < 2:
 		raise ValueError('alphabet has no non-zero elements')
 
-	x = 0
+	value = 0
 	for word in phrase:
-		x *= len(words)
-		x += words.index(word)
+		value *= len(words)
+		value += words.index(word)
 
-	return x
+	return value
 
 def hmac_words(key, target='amazon', words=None, bits=48):
 	if isinstance(key, str):
 		key = key.encode('utf8')
+
 	if isinstance(target, str):
 		target = target.encode('utf8')
+
 	digest = hmac.new(key, target, digestmod=hashlib.sha256).digest()
 	value = prime_truncate(int.from_bytes(digest, byteorder='big'), bits)
+
 	return int_as_words(value, words)
 
 if __name__=='__main__':
