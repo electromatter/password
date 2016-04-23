@@ -3,7 +3,6 @@
 from os import urandom as _urandom
 from hashlib import sha256 as _sha256
 import hmac as _hmac
-from getpass import getpass as _getpass
 from bisect import bisect_right as _bisect_right
 
 try:
@@ -144,13 +143,15 @@ def hmac(key, target='amazon', prime_bits=48, digestmod=_sha256, words=None):
 
 if __name__=='__main__':
 	import sys
+	import getpass
+
 	if len(sys.argv) == 2:
 		target = input('Service: ')
-		master = _getpass('Master: ')
+		master = getpass.getpass('Master: ')
 		print(' '.join(hmac(master, target)))
 	if len(sys.argv) == 3:
 		target = sys.argv[2]
-		master = _getpass('Master: ')
+		master = getpass.getpass('Master: ')
 		print(' '.join(hmac(master, target)))
 	elif len(sys.argv) == 1:
 		print(' '.join(gen_password()))
