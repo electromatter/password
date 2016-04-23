@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
 
+import base64
+import hashlib
+import sys
+import getpass
+
 def ss64(master, target='amazon'):
 	password = '%s:%s' % (master, target)
 	digest = hashlib.sha256(password.encode('utf8')).digest()

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import os
-import base64
 import hashlib
 import hmac
 import sys
