@@ -17,7 +17,12 @@ def modinv(b, n):
 	return x % n
 
 def eval_poly(prime, coeff, x):
-	pass
+	value = 0
+	resid = 1
+	for c in coeff:
+		value = (value + c * resid) % prime
+		resid = (resid * x) % prime
+	return value
 
 def gen_shares(prime, secret, n, m):
 	if isinstance(secret, str):
@@ -39,13 +44,15 @@ def gen_shares(prime, secret, n, m):
 def recover(prime, shares):
 	shares = set(shares)
 
-	if len(shares) != len(set(zip(*shares)[0])):
+	if len(shares) != len(set(next(zip(*shares)))):
 		raise ValueError('invalid shares - non-univalent')
 
 	value = 0
 	for x_0, y_0 in shares:
 		product = 1
 		for x, _ in shares:
+			if x == x_0:
+				continue
 			product = (product * x * modinv((x - x_0) % prime, prime)) % prime
 		value = (value + y_0 * product) % prime
 
