@@ -86,7 +86,7 @@ def pick(words=None):
 
 	return words[random_int(len(words))]
 
-def gen_password(entropy=60, words=None):
+def gen_password(entropy=55, words=None):
 	if words is None:
 		words = WORDS
 
@@ -136,7 +136,7 @@ def words_as_int(phrase, words=None):
 
 	return value
 
-def hmac(key, target='amazon', prime_bits=48, digestmod=_sha256, words=None):
+def hmac(key, target='amazon', prime_bits=44, digestmod=_sha256, words=None):
 	if isinstance(key, str):
 		key = key.encode('utf8')
 
