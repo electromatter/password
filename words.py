@@ -57,9 +57,25 @@ def prime(bits, residuals=None):
 
 	return (1 << bits) - residuals[index][1]
 
-def random_int(bits):
+def random_bits(bits):
 	x = int.from_bytes(_urandom((bits + 7) // 8), byteorder='big')
 	return x & ((1 << bits) - 1)
+
+# random_int returns [low, high) or [0, low)
+def random_int(low, high=None):
+	if high is None:
+		high = low
+		low = 0
+
+	if low == high:
+		return low
+
+	bits = len(bin(high - low)) - 2
+	value = high
+	while value >= high:
+		value = random_bits(bits)
+
+	return value
 
 def pick(words=None):
 	if words is None:
@@ -68,13 +84,7 @@ def pick(words=None):
 	if len(words) < 2:
 		raise ValueError('alphabet has no non-zero elements')
 
-	entropy_words = len(bin(len(words))) - 2
-
-	x = len(words) + 1
-	while x >= len(words):
-		x = random_int(entropy_words)
-
-	return words[x]
+	return words[random_int(len(words))]
 
 def gen_password(entropy=60, words=None):
 	if words is None:
