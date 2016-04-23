@@ -13,11 +13,7 @@ def ss64(master, target='amazon'):
 
 if __name__=='__main__':
 	if len(sys.argv) == 2:
-		target = input('Service: ')
-		master = getpass.getpass('Master: ')
-		print(ss64(master, target))
-	if len(sys.argv) == 3:
-		target = sys.argv[2]
+		target = sys.argv[1]
 		master = getpass.getpass('Master: ')
 		print(ss64(master, target))
 	else:

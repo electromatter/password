@@ -156,11 +156,7 @@ if __name__=='__main__':
 	import getpass
 
 	if len(sys.argv) == 2:
-		target = input('Service: ')
-		master = getpass.getpass('Master: ')
-		print(' '.join(hmac(master, target)))
-	if len(sys.argv) == 3:
-		target = sys.argv[2]
+		target = sys.argv[1]
 		master = getpass.getpass('Master: ')
 		print(' '.join(hmac(master, target)))
 	elif len(sys.argv) == 1:
