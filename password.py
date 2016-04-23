@@ -129,12 +129,6 @@ def hmac_words(key, target='amazon', words=None, bits=48):
 	value = prime_truncate(int.from_bytes(digest, byteorder='big'), bits)
 	return int_as_words(value, words)
 
-def ss64_words(master, target='amazon', words=None, bits=48):
-	password = '%s:%s' % (master, target)
-	digest = hashlib.sha256(password.encode('utf8')).digest()
-	value = prime_truncate(int.from_bytes(digest, byteorder='big'), bits)
-	return int_as_words(value, words)
-
 def ss64(master, target='amazon'):
 	password = '%s:%s' % (master, target)
 	digest = hashlib.sha256(password.encode('utf8')).digest()
