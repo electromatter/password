@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 
-import os
-import hashlib
-import hmac
-import sys
-import getpass
-import bisect
+from os import urandom as _urandom
+from hashlib import sha256 as _sha256
+import hmac as _hmac
+from getpass import getpass as _getpass
+from bisect import bisect_right as _bisect_right
 
-WORDS = [line.strip() for line in open('english.txt') if line.strip() != '']
+try:
+	WORDS = [word.lower() for word in open('english.txt').read().split() if word != '']
+except:
+	WORDS = []
 
 # All the primes just less than a power of two encoded as:
 # 2^key - value
@@ -50,21 +52,15 @@ def prime(bits, residuals=None):
 	if residuals is None:
 		residuals = PRIME_RESIDUALS
 
-	index = bisect.bisect_right(residuals, bits)
+	index = _bisect_right(residuals, bits)
 	if index == len(residuals):
 		raise ValueError('No stored prime that can hold a value of %r bits' % bits)
 
 	return (1 << bits) - residuals[index][1]
 
-def prime_truncate(x, bits):
-	return x % prime(bits)
-
-def truncate_bits(x, bits):
+def random_int(bits):
+	x = int.from_bytes(_urandom((bits + 7) // 8), byteorder='big')
 	return x & ((1 << bits) - 1)
-
-def secure_random_int(bits):
-	x = int.from_bytes(os.urandom((bits + 7) // 8), byteorder='big')
-	return truncate_bits(x, bits)
 
 def pick(words=None):
 	if words is None:
@@ -77,7 +73,7 @@ def pick(words=None):
 
 	x = len(words) + 1
 	while x >= len(words):
-		x = secure_random_int(entropy_words)
+		x = random_int(entropy_words)
 
 	return words[x]
 
@@ -131,27 +127,31 @@ def words_as_int(phrase, words=None):
 
 	return value
 
-def hmac_words(key, target='amazon', words=None, bits=48):
+def hmac(key, target='amazon', prime_bits=48, digestmod=_sha256, words=None):
 	if isinstance(key, str):
 		key = key.encode('utf8')
 
 	if isinstance(target, str):
 		target = target.encode('utf8')
 
-	digest = hmac.new(key, target, digestmod=hashlib.sha256).digest()
-	value = prime_truncate(int.from_bytes(digest, byteorder='big'), bits)
+	digest = _hmac.new(key, target, digestmod=digestmod).digest()
+	value = int.from_bytes(digest, byteorder='big')
+
+	if prime_bits is not None:
+		value = prime_truncate(, prime_bits)
 
 	return int_as_words(value, words)
 
 if __name__=='__main__':
+	import sys
 	if len(sys.argv) == 2:
 		target = input('Service: ')
-		master = getpass.getpass('Master: ')
-		print(' '.join(hmac_words(master, target)))
+		master = _getpass('Master: ')
+		print(' '.join(hmac(master, target)))
 	if len(sys.argv) == 3:
 		target = sys.argv[2]
-		master = getpass.getpass('Master: ')
-		print(' '.join(hmac_words(master, target)))
+		master = _getpass('Master: ')
+		print(' '.join(hmac(master, target)))
 	elif len(sys.argv) == 1:
 		print(' '.join(gen_password()))
 	else:
