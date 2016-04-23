@@ -136,11 +136,19 @@ def ss64(master, target='amazon'):
 	       .replace('+', 'E').replace('/', 'a')
 
 if __name__=='__main__':
-	if len(sys.argv) == 2:
-		master = getpass.getpass('Master: ')
-		print(ss64(master, sys.argv[1]))
+	if len(sys.argv) == 3:
+		arg = sys.argv[1].lower()
+		target = sys.argv[2]
+		if arg == 'hmac':
+			master = getpass.getpass('Master: ')
+			print(ss64(master, target))
+		elif arg == 'ss64':
+			master = getpass.getpass('Master: ')
+			print(' '.join(hmac_words(master, target)))
+		else:
+			print('hmac or ss64')
 	elif len(sys.argv) == 1:
 		print(' '.join(gen_password()))
 	else:
-		print('usage: password.py <service name> or password.py')
+		print('usage: password.py <hmac or ss64> <service name> or password.py')
 
