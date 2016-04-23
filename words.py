@@ -109,7 +109,7 @@ def int_as_words(value, words=None):
 	if words is None:
 		words = WORDS
 
-	if x == 0:
+	if value == 0:
 		return words[0]
 
 	if len(words) < 2:
