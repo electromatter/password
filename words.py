@@ -12,7 +12,7 @@ except:
 
 # All the primes just less than a power of two encoded as:
 # 2^key - value
-PRIME_RESIDUALS = list({
+PRIME_RESIDUALS = sorted({
   8: 5,    9: 3,     10: 3,    11: 9,    12: 3,    13: 1,    14: 3,    15: 19,
  16: 15,   17: 1,    18: 5,    19: 1,    20: 3,    21: 9,    22: 3,    23: 15,
  24: 3,    25: 39,   26: 5,    27: 39,   28: 57,   29: 3,    30: 35,   31: 1,
