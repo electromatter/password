@@ -147,7 +147,7 @@ def hmac(key, target='amazon', prime_bits=48, digestmod=_sha256, words=None):
 	value = int.from_bytes(digest, byteorder='big')
 
 	if prime_bits is not None:
-		value = prime_truncate(, prime_bits)
+		value %= prime(prime_bits)
 
 	return int_as_words(value, words)
 
