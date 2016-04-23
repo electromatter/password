@@ -51,7 +51,7 @@ def prime(bits, residuals=None):
 	if residuals is None:
 		residuals = PRIME_RESIDUALS
 
-	index = _bisect_right(residuals, bits)
+	index = _bisect_right(residuals, (bits, -1))
 	if index == len(residuals):
 		raise ValueError('No stored prime that can hold a value of %r bits' % bits)
 
