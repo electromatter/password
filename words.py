@@ -129,26 +129,16 @@ def hmac_words(key, target='amazon', words=None, bits=48):
 	value = prime_truncate(int.from_bytes(digest, byteorder='big'), bits)
 	return int_as_words(value, words)
 
-def ss64(master, target='amazon'):
-	password = '%s:%s' % (master, target)
-	digest = hashlib.sha256(password.encode('utf8')).digest()
-	return base64.b64encode(digest).decode('ascii')[:20]		\
-	       .replace('+', 'E').replace('/', 'a')
-
 if __name__=='__main__':
+	if len(sys.argv) == 2:
+		target = input('Service: ')
+		master = getpass.getpass('Master: ')
+		print(' '.join(hmac_words(master, target)))
 	if len(sys.argv) == 3:
-		arg = sys.argv[1].lower()
 		target = sys.argv[2]
-		if arg == 'ss64':
-			master = getpass.getpass('Master: ')
-			print(ss64(master, target))
-		elif arg == 'hmac':
-			master = getpass.getpass('Master: ')
-			print(' '.join(hmac_words(master, target)))
-		else:
-			print('hmac or ss64')
+		master = getpass.getpass('Master: ')
+		print(' '.join(hmac_words(master, target)))
 	elif len(sys.argv) == 1:
 		print(' '.join(gen_password()))
 	else:
-		print('usage: password.py <hmac or ss64> <service name> or password.py')
-
+		print('usage: words.py <service name> or words.py')
