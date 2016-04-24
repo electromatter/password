@@ -44,9 +44,9 @@ def gen_poly(prime, secret, m):
 
 def gen_shares(prime, secret, n, m):
 	if n < m:
-		raise ValueError('Secret is unrecoverable. (too many required shares)')
+		raise ValueError('Secret is unrecoverable. (too many shares required)')
 
-	if n <= prime:
+	if n >= prime:
 		raise ValueError('Prime too small for the desired number of shares.')
 
 	coeff = gen_poly(prime, secret, n, m)
