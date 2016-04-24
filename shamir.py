@@ -24,7 +24,7 @@ def eval_poly(prime, coeff, x):
 		resid = (resid * x) % prime
 	return value
 
-def gen_poly(prime, secret, n, m):
+def gen_poly(prime, secret, m):
 	if isinstance(secret, str):
 		secret = secret.encode('utf8')
 
@@ -32,22 +32,31 @@ def gen_poly(prime, secret, n, m):
 		secret = int.from_bytes(secret, byteorder='big')
 
 	if secret >= prime:
-		raise ValueError('secret is ambiguous under prime')
+		raise ValueError('Secret too large - unrecoverable under selected prime')
 
-	if n < m or m < 2:
-		raise ValueError('invalid number of shares')
+	if m < 1:
+		raise ValueError('No shares. Secret cannot be recovered')
+
+	if m < 2:
+		raise ValueError('Shamir reduces to identity under one share.')
 
 	return [secret] + [random_int(prime) for _ in range(m - 1)]
 
 def gen_shares(prime, secret, n, m):
+	if n < m:
+		raise ValueError('Too many required shares, secret unrecoverable.')
+
+	if n <= prime:
+		raise ValueError('Prime too small for the desired number of shares.')
+
 	coeff = gen_poly(prime, secret, n, m)
 	return [(x, eval_poly(prime, coeff, x)) for x in range(1, n + 1)]
 
 def recover(prime, shares):
-	shares = set(shares)
+	shares = set((x % prime, y % prime) for x, y in shares)
 
 	if len(shares) != len(set(next(zip(*shares)))):
-		raise ValueError('invalid shares - non-univalent')
+		raise ValueError('Duplicated x value.')
 
 	value = 0
 	for x_0, y_0 in shares:
