@@ -105,7 +105,7 @@ def gen_password(entropy=55, words=None):
 
 	return tuple(pick(words) for _ in range(num_words))
 
-def int_as_words(value, words=None):
+def from_int(value, words=None):
 	if words is None:
 		words = WORDS
 
@@ -122,7 +122,10 @@ def int_as_words(value, words=None):
 
 	return tuple(reversed(phrase))
 
-def words_as_int(phrase, words=None):
+def from_bytes(value, words=None):
+	return from_int(int.from_bytes(value, byteorder='big'), words)
+
+def to_int(phrase, words=None):
 	if words is None:
 		words = WORDS
 
@@ -149,7 +152,7 @@ def hmac(key, target='amazon', prime_bits=44, digestmod=_sha256, words=None):
 	if prime_bits is not None:
 		value %= prime(prime_bits)
 
-	return int_as_words(value, words)
+	return from_int(value, words)
 
 if __name__=='__main__':
 	import sys
