@@ -32,10 +32,10 @@ def gen_poly(prime, secret, m):
 		secret = int.from_bytes(secret, byteorder='big')
 
 	if secret >= prime:
-		raise ValueError('Secret too large - unrecoverable under selected prime')
+		raise ValueError('Secret is unrecoverable under selected prime. (secret is too large)')
 
 	if m < 1:
-		raise ValueError('No shares. Secret cannot be recovered')
+		raise ValueError('Secret is unrecoverable. (no shares)')
 
 	if m < 2:
 		raise ValueError('Shamir reduces to identity under one share.')
@@ -44,7 +44,7 @@ def gen_poly(prime, secret, m):
 
 def gen_shares(prime, secret, n, m):
 	if n < m:
-		raise ValueError('Too many required shares, secret unrecoverable.')
+		raise ValueError('Secret is unrecoverable. (too many required shares)')
 
 	if n <= prime:
 		raise ValueError('Prime too small for the desired number of shares.')
